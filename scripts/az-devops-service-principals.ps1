@@ -3,10 +3,8 @@ param (
   [array] $creds = @(
     @{
       name             = 'sp-sopi2--tb-msdn--tb-sample-app2--contributor'
-      subscriptionName = 'tb-msdn'
-      subscriptionId   = 'e635a9ae-652c-427a-8ac7-70e9581603fd'
+      subscriptionName = 'tb-msdn'    
       endpoint         = 'sopi2--tb-msdn--contributor'
-      skipAssignment   = $false
     }
 
   )
@@ -31,8 +29,14 @@ Write-Host '=============================='
 foreach ($cr in $creds) {
 
   Write-Host "  $($cr.name)"
+
+  $global:LASTEXITCODE = 0  
   az account set --subscription $cr.subscriptionName
+  $acc = (az account show --output json) | ConvertFrom-Json  
+  if ($LASTEXITCODE -ne 0) { throw 'error' }
+
   [array] $existingPrincipals = (az ad sp list --all --output json) | ConvertFrom-Json  
+  if ($LASTEXITCODE -ne 0) { throw 'error' }
   $exPrinc = $existingPrincipals | Where-Object -Property appDisplayName -like $cr.name | Select-Object -first 1
   # $exPrinc
 
@@ -42,14 +46,16 @@ foreach ($cr in $creds) {
   else {
     Write-Host "    Creating SP"
     $sp = (az ad sp create-for-rbac --name $cr.name --skip-assignment --output json) | ConvertFrom-Json       
+    if ($LASTEXITCODE -ne 0) { throw 'error' }
+
     $sp | ConvertTo-Json | Out-File "secret-$($cr.name).json" 
-    if ($sp) {
-      
-      if ($cr.connection -and $sp) {    
+    if ($sp) {      
+      if ($cr.endpoint -and $sp) {    
         Write-Host "      Creating Service Endpoint"
         $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = $sp.password
-        az devops service-endpoint azurerm create --azure-rm-service-principal-id $sp.appId  --azure-rm-subscription-id $cr.subscriptionId --azure-rm-subscription-name $cr.subscriptionName --azure-rm-tenant-id $sp.tenant --name $cr.endpoint
+        az devops service-endpoint azurerm create --azure-rm-service-principal-id $sp.appId  --azure-rm-subscription-id $acc.id --azure-rm-subscription-name $acc.name --azure-rm-tenant-id $sp.tenant --name $cr.endpoint
         $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = ''
+        if ($LASTEXITCODE -ne 0) { throw 'error' }        
       }    
     }
   } 
