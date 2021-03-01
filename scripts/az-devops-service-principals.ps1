@@ -40,6 +40,7 @@ foreach ($cr in $creds) {
   $exPrinc = $existingPrincipals | Where-Object -Property appDisplayName -like $cr.name | Select-Object -first 1
   # $exPrinc
 
+
   if ($exPrinc) {
     Write-Host "    SP found"
   }
@@ -49,6 +50,12 @@ foreach ($cr in $creds) {
     if ($LASTEXITCODE -ne 0) { throw 'error' }
 
     $sp | ConvertTo-Json | Out-File "secret-$($cr.name).json" 
+    # $sp = Get-Content -Path "secret-$($cr.name).json" | ConvertFrom-Json
+
+    Write-Host "      Assigning Contributor"
+    az role assignment create --assignee $sp.appId --role 'Contributor' --scope "/subscriptions/$($acc.id)"
+    
+
     if ($sp) {      
       if ($cr.endpoint -and $sp) {    
         Write-Host "      Creating Service Endpoint"
