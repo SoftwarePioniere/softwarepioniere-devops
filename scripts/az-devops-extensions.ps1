@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param (
+param (  
   $extensions = @( 
     @{
       extensionid = 'custom-terraform-tasks'

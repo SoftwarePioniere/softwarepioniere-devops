@@ -1,0 +1,56 @@
+[CmdletBinding()]
+param (
+  [array] $creds = @(
+    @{
+      name             = 'sp-sopi2--tb-msdn--tb-sample-app2--contributor'
+      subscriptionName = 'tb-msdn'
+      subscriptionId   = 'e635a9ae-652c-427a-8ac7-70e9581603fd'
+      endpoint         = 'sopi2--tb-msdn--contributor'
+      skipAssignment   = $false
+    }
+
+  )
+)
+
+# az login --tenant '74a8c6fa-684f-4b5a-b174-34428871d801' 
+# az account set --subscription 'sopi-demo'
+
+az account list --query "[].{Name:name,SubscriptionId:id,TenantId:tenantId}" --output table
+
+Write-Host '=============================='
+Write-Host 'Creating Service Principals and Service Connections'
+Write-Host '=============================='
+
+# $cr = $creds[0]
+# $existingPrincipals | ConvertTo-Json | Out-File 'existingPrincipals.json'
+# $existingPrincipals | ForEach-Object  { Write-Host $_.appDisplayName  }
+
+# [array] $existingServiceCo#nnections = (az devops service-endpoint list --output json) | ConvertFrom-Json
+# $existingPrincipals | ForEach-Object  { Write-Host $_.  }
+
+foreach ($cr in $creds) {
+
+  Write-Host "  $($cr.name)"
+  az account set --subscription $cr.subscriptionName
+  [array] $existingPrincipals = (az ad sp list --all --output json) | ConvertFrom-Json  
+  $exPrinc = $existingPrincipals | Where-Object -Property appDisplayName -like $cr.name | Select-Object -first 1
+  # $exPrinc
+
+  if ($exPrinc) {
+    Write-Host "    SP found"
+  }
+  else {
+    Write-Host "    Creating SP"
+    $sp = (az ad sp create-for-rbac --name $cr.name --skip-assignment --output json) | ConvertFrom-Json       
+    $sp | ConvertTo-Json | Out-File "secret-$($cr.name).json" 
+    if ($sp) {
+      
+      if ($cr.connection -and $sp) {    
+        Write-Host "      Creating Service Endpoint"
+        $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = $sp.password
+        az devops service-endpoint azurerm create --azure-rm-service-principal-id $sp.appId  --azure-rm-subscription-id $cr.subscriptionId --azure-rm-subscription-name $cr.subscriptionName --azure-rm-tenant-id $sp.tenant --name $cr.endpoint
+        $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = ''
+      }    
+    }
+  } 
+}

@@ -5,7 +5,9 @@ param (
   $scripts = @(
     'az-devops-extensions.ps1',
     'az-devops-org-security.ps1',
-    'az-devops-projects.ps1'
+    'az-devops-projects.ps1',
+    'az-devops-repos.ps1',
+    'az-devops-service-principals.ps1'
   )
 )
 
