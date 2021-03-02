@@ -29,6 +29,4 @@ else {
   if ($LASTEXITCODE -ne 0) { throw 'error' }
 }  
 
-$pr
-
 
