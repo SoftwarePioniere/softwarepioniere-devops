@@ -54,6 +54,8 @@ foreach ($cr in $creds) {
     # $sp = Get-Content -Path "secret-$($cr.name).json" | ConvertFrom-Json
 
     if ($cr.roles) {
+      Read-Host -Prompt '     Assigning Roles.. wait until created in aad and press enter'
+
       foreach ($r in $cr.roles) {
         Write-Host "      Assigning Role $r"
         az role assignment create --assignee $sp.appId --role $r --scope "/subscriptions/$($acc.id)"
