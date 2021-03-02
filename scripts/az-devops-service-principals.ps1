@@ -5,6 +5,7 @@ param (
       name             = 'sp-sopi2--tb-msdn--tb-sample-app2--contributor'
       subscriptionName = 'tb-msdn'    
       endpoint         = 'sopi2--tb-msdn--contributor'
+      roles            =  @('Contributor')
     }
 
   )
@@ -13,7 +14,7 @@ param (
 # az login --tenant '74a8c6fa-684f-4b5a-b174-34428871d801' 
 # az account set --subscription 'sopi-demo'
 
-az account list --query "[].{Name:name,SubscriptionId:id,TenantId:tenantId}" --output table
+# az account list --query "[].{Name:name,SubscriptionId:id,TenantId:tenantId}" --output table
 
 Write-Host '=============================='
 Write-Host 'Creating Service Principals and Service Connections'
@@ -52,10 +53,14 @@ foreach ($cr in $creds) {
     $sp | ConvertTo-Json | Out-File "secret-$($cr.name).json" 
     # $sp = Get-Content -Path "secret-$($cr.name).json" | ConvertFrom-Json
 
-    Write-Host "      Assigning Contributor"
-    az role assignment create --assignee $sp.appId --role 'Contributor' --scope "/subscriptions/$($acc.id)"
+    if ($cr.roles) {
+      foreach ($r in $cr.roles) {
+        Write-Host "      Assigning Role $r"
+        az role assignment create --assignee $sp.appId --role $r --scope "/subscriptions/$($acc.id)"
+      }    
+    }
     
-
+    
     if ($sp) {      
       if ($cr.endpoint -and $sp) {    
         Write-Host "      Creating Service Endpoint"
