@@ -8,7 +8,7 @@ $items = @(
    @{
      folder = 'SoftwarePioniere.DevOps'
      files  = @(    
-       'aad-users-and-groups.csproj'
+       'SoftwarePioniere.DevOps.csproj'
        'Program.cs'
      )
    }
