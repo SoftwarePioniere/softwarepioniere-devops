@@ -1,0 +1,20 @@
+[
+  {
+    "name": "TB Gruppe1",
+    "nick": "tb-gruppe1",
+    "delete": false,
+    "members": [
+      "a.admin2@sopidemo.de",
+      "a.appelmann@sopidemo.de"
+    ]
+  },
+  {
+    "name": "TB Gruppe2",
+    "nick": "tb-gruppe2",
+    "delete": false,
+    "members" : [
+      "a.appelmann@sopidemo.de",
+      "a.appelmann@sopidemo.de"
+    ]
+  }
+]

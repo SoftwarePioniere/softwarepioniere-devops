@@ -1,0 +1,21 @@
+[
+  {
+    "upn": "a.admin2@sopidemo.de",
+    "anzeige": "Anton Admin2",
+    "vorname": "Anton",
+    "nachname": "Admin2"
+  },
+  {
+    "upn": "b.bild@sopidemo.de",
+    "anzeige": "Bea Bilderbuch",
+    "vorname": "Bea",
+    "nachname": "Bilderbuch",    
+    "delete": true
+  },
+  {
+    "upn": "a.appelmann@sopidemo.de",
+    "anzeige":  "Adam Appelmann",
+    "vorname": "Adam",
+    "nachname": "Appelmann"
+  }
+]
