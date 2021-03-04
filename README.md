@@ -11,10 +11,7 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw
 
 
 # download tool to local folder
-Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/SoftwarePioniere/softwarepioniere-devops/main/tools/download-tools.ps1'))
+Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/SoftwarePioniere/softwarepioniere-devops/main/download-tools.ps1'))
 
-
-do
-dotnet tool install --add-source ./microsoft.botsay/nupkg microsoft.botsay
 
 ```

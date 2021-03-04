@@ -1,14 +1,13 @@
 [CmdletBinding()]
 param (
-  $baseUrl = 'https://raw.githubusercontent.com/SoftwarePioniere/softwarepioniere-devops/main/tools/',
+  $baseUrl = 'https://raw.githubusercontent.com/SoftwarePioniere/softwarepioniere-devops/main/src/',
   $basePath =  'downloaded-tools' 
 )
 
 $items = @(
    @{
-     folder = 'aad-users-and-groups'
-     files  = @(
-       '.gitignore',
+     folder = 'SoftwarePioniere.DevOps'
+     files  = @(    
        'aad-users-and-groups.csproj'
        'Program.cs'
      )
