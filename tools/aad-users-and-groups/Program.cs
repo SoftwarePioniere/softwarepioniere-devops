@@ -23,7 +23,7 @@ namespace aad_users_and_groups
     internal class Program
     {
         public static async Task<int> Main(bool azclilogin, bool export, bool list, bool sync,
-            string datadir, string password = "Password01")
+            string datadir = "c://temp/aad-dev", string password = "Password01")
         {
             Log(0, "START");
 
@@ -85,52 +85,83 @@ namespace aad_users_and_groups
                 dataDir = Directory.GetCurrentDirectory();
             }
 
-            var aadUsers = await LoadActiveDirectoryUsersAsync(authenticated);
-
-            Log(0, "===========================================");
-            Log(0, "ExportAsync");
+            if (!Directory.Exists(dataDir))
             {
-                Log(1, $"AAD Users: {aadUsers.Length}");
-                var list = aadUsers.Select(MyUser.Create).ToArray();
-                var json = JsonSerializer.Serialize(list,
-                    new JsonSerializerOptions
-                    {
-                        WriteIndented = true
-                    });
-                await File.WriteAllTextAsync(Path.Combine(dataDir, "export-users.json"), json, Encoding.UTF8);
+                Directory.CreateDirectory(dataDir);
             }
+
+            Log(0, "ExportAsync");
+            Log(0, "===========================================");
+            var aadUsers = await LoadActiveDirectoryUsersAsync(authenticated);
+            Log(1, $"AAD Users: {aadUsers.Length}");
+            var aadGroups = await LoadActiveDirectoryGroupsAsync(authenticated);
+            Log(1, $"AAD Groups: {aadGroups.Length}");
+
+            var myUsers = aadUsers.Select(MyUser.Create).ToArray();
+
             Log(0, "===========================================");
             {
-                var aadGroups = await LoadActiveDirectoryGroupsAsync(authenticated);
-                var list = await Task.WhenAll(aadGroups.Select(async aadGroup =>
-                {
-                    var aadMembers = await LoadPagedCollectionAsync(aadGroup.ListMembersAsync());
-                    var g = MyGroup.Create(aadGroup);
-
-
-                    g.Members = aadMembers.Select(mem =>
-                        {
-                            var u = aadUsers.FirstOrDefault(x => x.Id == mem.Id);
-                            if (u != null)
-                                return u.UserPrincipalName;
-                            return string.Empty;
-                        })
-                        .Where(x => !string.IsNullOrEmpty(x))
-                        .ToArray();
-
-                    return g;
-                }));
-
-
-                Log(1, $"AAD Groups: {aadGroups.Length}");
-                //var list = aadGroups.Select(MyGroup.Create).ToArray();
-
-                var json = JsonSerializer.Serialize(list,
+                var json = JsonSerializer.Serialize(myUsers,
                     new JsonSerializerOptions
                     {
-                        WriteIndented = true
+                        WriteIndented = true,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                     });
-                await File.WriteAllTextAsync(Path.Combine(dataDir, "export-groups.json"), json, Encoding.UTF8);
+                var file = "export-users.json";
+                Log(1, $"Writing Users JSON to {file}");
+                await File.WriteAllTextAsync(Path.Combine(dataDir, file), json, Encoding.UTF8);
+            }
+
+            var myGroups = await Task.WhenAll(aadGroups.Select(async aadGroup =>
+            {
+                var aadMembers = await LoadPagedCollectionAsync(aadGroup.ListMembersAsync());
+                var g = MyGroup.Create(aadGroup);
+
+                g.Members = aadMembers
+                    .Where(x => x != null)
+                    .Select(mem =>
+                    {
+                        var u = aadUsers.FirstOrDefault(x => x.Id == mem.Id);
+                        if (u != null)
+                            return u.UserPrincipalName;
+                        return string.Empty;
+                    })
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToArray();
+
+                return g;
+            }));
+
+            Log(0, "===========================================");
+            {
+                var json = JsonSerializer.Serialize(myGroups,
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    });
+                var file = "export-groups.json";
+                Log(1, $"Writing Groups JSON to {file}");
+                await File.WriteAllTextAsync(Path.Combine(dataDir, file), json, Encoding.UTF8);
+            }
+
+            Log(0, "===========================================");
+
+            foreach (var myGroup in myGroups)
+            {
+                var users = myUsers.Where(x => myGroup.Members != null && myGroup.Members.Contains(x.Upn)).ToArray();
+                if (users.Length > 0 && !string.IsNullOrEmpty(myGroup.Name))
+                {
+                    var file = $"export-users-{myGroup.Name.Replace(" ", "-")}.json";
+                    var json = JsonSerializer.Serialize(users,
+                        new JsonSerializerOptions
+                        {
+                            WriteIndented = true,
+                            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                        });
+                    Log(1, $"Writing Users JSON to {file}");
+                    await File.WriteAllTextAsync(Path.Combine(dataDir, file), json, Encoding.UTF8);
+                }
             }
             Log(0, "===========================================");
         }

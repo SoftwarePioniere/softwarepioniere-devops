@@ -9,9 +9,9 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Management.Fluent"/>
-    <PackageReference Include="Microsoft.Azure.Management.Graph.RBAC.Fluent"/>
-    <PackageReference Include="System.CommandLine"/>
+    <PackageReference Include="Microsoft.Azure.Management.Fluent" />
+    <PackageReference Include="Microsoft.Azure.Management.Graph.RBAC.Fluent" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
 </Project>

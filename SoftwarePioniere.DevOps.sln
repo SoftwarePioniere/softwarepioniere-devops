@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwarePioniere.DevOps", "src\SoftwarePioniere.DevOps\SoftwarePioniere.DevOps.csproj", "{BC82061A-A7B4-4761-BFA8-4BF2C721F4DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aad-users-and-groups", "tools\aad-users-and-groups\aad-users-and-groups.csproj", "{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{BC82061A-A7B4-4761-BFA8-4BF2C721F4DB}.Release|x64.Build.0 = Release|Any CPU
 		{BC82061A-A7B4-4761-BFA8-4BF2C721F4DB}.Release|x86.ActiveCfg = Release|Any CPU
 		{BC82061A-A7B4-4761-BFA8-4BF2C721F4DB}.Release|x86.Build.0 = Release|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Debug|x64.Build.0 = Debug|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Debug|x86.Build.0 = Debug|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Release|x64.ActiveCfg = Release|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Release|x64.Build.0 = Release|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Release|x86.ActiveCfg = Release|Any CPU
+		{53DDB7CA-1542-48BA-9F6E-AA52E09357D4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
