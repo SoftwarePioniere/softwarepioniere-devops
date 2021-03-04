@@ -1,39 +1,62 @@
 [CmdletBinding()]
 param (
-  $baseUrl = 'https://raw.githubusercontent.com/SoftwarePioniere/softwarepioniere-devops/main/scripts/',
-  $path   = 'downloaded-scripts',
-  $scripts = @(
-    'az-devops-extensions.ps1',
-    'az-devops-group-membership.ps1',
-    'az-devops-org-security.ps1',
-    'az-devops-pipelines.ps1',
-    'az-devops-project.ps1',
-    'az-devops-projects.ps1',
-    'az-devops-repos.ps1',
-    'az-devops-service-principals.ps1'
-  )
+  $baseUrl = 'https://raw.githubusercontent.com/SoftwarePioniere/softwarepioniere-devops/main/tools/',
+  $basePath =  'downloaded-tools' 
 )
 
+$items = @(
+   @{
+     folder = 'aad-users-and-groups'
+     files  = @(
+       '.gitignore',
+       'aad-users-and-groups.csproj'
+       'Program.cs'
+     )
+   }
+)
+
+
 Write-Host '=============================='
-Write-Host 'Downloading Scripts'
+Write-Host 'Downloading Tools'
 Write-Host '=============================='
 
-if (! (Test-Path $path)) {
-  Write-Host "  Creating Directory $path"
-  New-Item -Path $path -ItemType Directory
+if (! (Test-Path $basePath)) {
+  Write-Host "  Creating Directory $basePath"
+  New-Item -Path $basePath -ItemType Directory
 } else {  
-  Write-Host "  Recreating Directory $path"
-  Remove-Item -Path $path -Recurse -Force
-  New-Item -Path $path -ItemType Directory  
+  Write-Host "  Recreating Directory $basePath"
+  Remove-Item -Path $basePath -Recurse -Force
+  New-Item -Path $basePath -ItemType Directory  
 }
 
-foreach ($s in $scripts) {
-  Write-Host "  Downloading Script: $s"
-  $url = $baseUrl + $s
-  Write-Host "    Url: $url"
-  $output = Join-Path $path -ChildPath $s
-  Write-Host "    Output: $output"
-  $global:LASTEXITCODE = 0  
-  Invoke-WebRequest -Uri $url -OutFile $output
-  if ($LASTEXITCODE -ne 0) { throw 'error' }
+# $item = $items[0]
+
+Push-Location $basePath
+
+foreach( $item in $items) {
+  $path = $item.folder
+  Write-Host "  Path: $path"
+
+
+  if (! (Test-Path $path)) {
+    Write-Host "  Creating Directory $path"
+    New-Item -Path $path -ItemType Directory
+  } 
+
+  # $s = $item.files[0]
+  foreach ($s in $item.files) {
+    Write-Host "  Downloading File: $s"
+    $url = $baseUrl + $($item.folder) + '/' + $s
+    Write-Host "    Url: $url"
+  
+    $output = Join-Path $path -ChildPath $s
+    Write-Host "    Output: $output"
+    $global:LASTEXITCODE = 0  
+    Invoke-WebRequest -Uri $url -OutFile $output
+    if ($LASTEXITCODE -ne 0) { throw 'error' }
+  }
+
 }
+
+Pop-Location
+  
