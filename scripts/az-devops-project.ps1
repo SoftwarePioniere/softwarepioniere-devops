@@ -12,7 +12,7 @@ Write-Host "Project: $name"
 
 $global:LASTEXITCODE = 0  
 Write-Host "  Loading Projects"
-[array] $existingProjects = (az devops project list --output json) | ConvertFrom-Json
+[array] $existingProjects = (az devops project list --detect --output json) | ConvertFrom-Json
 $existingProjects = $existingProjects.value
 if ($LASTEXITCODE -ne 0) { throw 'error' }
 
@@ -25,7 +25,7 @@ else {
   Write-Host "  Creating Project.."
   
   $global:LASTEXITCODE = 0  
-  $pr = (az devops project create --name $name --description $description) | ConvertFrom-Json
+  $pr = (az devops project create --name $name --description $description --detect) | ConvertFrom-Json
   if ($LASTEXITCODE -ne 0) { throw 'error' }
 }  
 
