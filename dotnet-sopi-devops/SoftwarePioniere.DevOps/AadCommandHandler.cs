@@ -96,6 +96,7 @@ namespace SoftwarePioniere.DevOps
 
                 g.Members = aadMembers
                     .Where(x => x != null)
+                    .OfType<IActiveDirectoryUser>()
                     .Select(mem =>
                     {
                         var u = aadUsers.FirstOrDefault(x => x.Id == mem.Id);
@@ -111,6 +112,7 @@ namespace SoftwarePioniere.DevOps
                     .ToArray();
 
                 g.Groups = aadMembers.Where(x => x != null)
+                    .OfType<IActiveDirectoryGroup>()
                     .Select(mem =>
                     {
                         var u = aadGroups.FirstOrDefault(x => x.Id == mem.Id);
@@ -439,7 +441,7 @@ namespace SoftwarePioniere.DevOps
                     var aadMembers = await LoadPagedCollectionAsync(group.ListMembersAsync());
 
                     Log(3, "Checking Members to Remove");
-                    foreach (var mem in aadMembers)
+                    foreach (var mem in aadMembers.OfType<IActiveDirectoryUser>())
                     {
                         Log(4, $"Name: {mem.Name}");
 
@@ -472,9 +474,56 @@ namespace SoftwarePioniere.DevOps
                         var u = aadUsers.FirstOrDefault(x => x.UserPrincipalName == upn);
                         if (u != null)
                         {
-                            if (aadMembers.All(x => x.Id != u.Id))
+                            if (aadMembers.OfType<IActiveDirectoryUser>().All(x => x.Id != u.Id))
                             {
                                 Log(5, "Adding Member to Group");
+                                await group.Update()
+                                    .WithMember(u)
+                                    .ApplyAsync();
+                            }
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    Log(3, "Checking Groups to Remove");
+                    foreach (var mem in aadMembers.OfType<IActiveDirectoryGroup>())
+                    {
+                        Log(4, $"Name: {mem.Name}");
+
+                        var u = aadGroups.FirstOrDefault(x => x.Id == mem.Id);
+                        if (u != null)
+                        {
+                            Log(5, $"MailNickname: {u.Inner.MailNickname}");
+
+                            if (!myGroup.Members.Contains(u.Inner.MailNickname))
+                            {
+                                Log(5, "Removing Group from Group");
+                                await group.Update()
+                                    .WithoutMember(mem.Id)
+                                    .ApplyAsync();
+                            }
+                        }
+                        else
+                        {
+                            Log(5, "Removing Group from Group");
+                            await group.Update()
+                                .WithoutMember(mem.Id)
+                                .ApplyAsync();
+                        }
+                    }
+
+                    Log(3, "Checking Members to Add");
+                    foreach (var nick in myGroup.Groups)
+                    {
+                        Log(4, $"{nick}");
+                        var u = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == nick);
+                        if (u != null)
+                        {
+                            if (aadMembers.OfType<IActiveDirectoryGroup>().All(x => x.Id != u.Id))
+                            {
+                                Log(5, "Adding Group to Group");
                                 await group.Update()
                                     .WithMember(u)
                                     .ApplyAsync();
