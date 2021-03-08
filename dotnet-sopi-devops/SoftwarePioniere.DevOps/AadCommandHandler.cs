@@ -23,13 +23,14 @@ namespace SoftwarePioniere.DevOps
     internal static class AadCommandHandler
     {
         public static async Task<int> HandleDeployCommand(bool loginAzCli, string dataDir, string defaultPassword,
-            string userFilePattern, string groupFilePattern)
+            string userFilePattern, string groupFilePattern, bool dryRun)
         {
             Console.WriteLine($"{nameof(loginAzCli)}: {loginAzCli}");
             Console.WriteLine($"{nameof(dataDir)}: {dataDir}");
             Console.WriteLine($"{nameof(defaultPassword)}: {defaultPassword}");
             Console.WriteLine($"{nameof(userFilePattern)}: {userFilePattern}");
             Console.WriteLine($"{nameof(groupFilePattern)}: {groupFilePattern}");
+            Console.WriteLine($"{nameof(dryRun)}: {dryRun}");
 
             var auth = Login(loginAzCli);
 
@@ -435,9 +436,8 @@ namespace SoftwarePioniere.DevOps
                 var group = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == myGroup.MailNickname);
                 if (group != null && myGroup.Members != null)
                 {
-                    Log(1, "Processing Group Membership");
+                    Log(1, "Processing User Membership");
                     Log(2, $"{group.Name}");
-
                     var aadMembers = await LoadPagedCollectionAsync(group.ListMembersAsync());
 
                     Log(3, "Checking Members to Remove");
@@ -483,10 +483,14 @@ namespace SoftwarePioniere.DevOps
                             }
                         }
                     }
-                    
-                    
-                    
-                    
+                }
+
+                if (group != null && myGroup.Groups != null)
+                {
+                    Log(1, "Processing Groups Membership");
+                    Log(2, $"{group.Name}");
+                    var aadMembers = await LoadPagedCollectionAsync(group.ListMembersAsync());
+
                     Log(3, "Checking Groups to Remove");
                     foreach (var mem in aadMembers.OfType<IActiveDirectoryGroup>())
                     {
@@ -497,7 +501,7 @@ namespace SoftwarePioniere.DevOps
                         {
                             Log(5, $"MailNickname: {u.Inner.MailNickname}");
 
-                            if (!myGroup.Members.Contains(u.Inner.MailNickname))
+                            if (!myGroup.Groups.Contains(u.Inner.MailNickname))
                             {
                                 Log(5, "Removing Group from Group");
                                 await group.Update()
@@ -514,7 +518,7 @@ namespace SoftwarePioniere.DevOps
                         }
                     }
 
-                    Log(3, "Checking Members to Add");
+                    Log(3, "Checking Groups to Add");
                     foreach (var nick in myGroup.Groups)
                     {
                         Log(4, $"{nick}");
