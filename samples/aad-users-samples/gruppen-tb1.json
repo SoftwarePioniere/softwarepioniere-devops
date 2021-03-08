@@ -15,6 +15,14 @@
     "members" : [
       "a.appelmann@sopidemo.de",
       "a.appelmann@sopidemo.de"
+    ],
+    "groups" : [
+      "tb-gruppe3"
     ]
+  },
+  {
+    "name": "TB Gruppe Sub",
+    "nick": "tb-gruppe3",
+    "delete": false    
   }
 ]
