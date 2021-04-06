@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param (
+  [string] $org,
   $groups = @(
     @{
       name    = 'Project Collection Administrators'
@@ -14,8 +15,9 @@ param (
 Write-Host '=============================='
 Write-Host 'Configuring Organization Group Memberships'
 Write-Host '=============================='
+Write-Host "Organization: $org" 
 
-$devOpsGroups = (az devops security group list --scope organization --output json) | ConvertFrom-Json
+$devOpsGroups = (az devops security group list --org $org --scope organization --output json) | ConvertFrom-Json
 
 foreach ($item in $groups) {
   # $item = $groups[0]
@@ -28,7 +30,7 @@ foreach ($item in $groups) {
     Write-Host '  Group found'
 
     Write-Host '    Loading Members into Array'
-    $devOpsMembership = (az devops security group membership list --id  $devOpsGroup.descriptor --output json) | ConvertFrom-Json
+    $devOpsMembership = (az devops security group membership list --org $org --id  $devOpsGroup.descriptor --output json) | ConvertFrom-Json
 
     $devOpsMembers = @()
     [array]$users = ($devOpsMembership | Get-Member -MemberType NoteProperty).Name
@@ -51,7 +53,7 @@ foreach ($item in $groups) {
       else {
         $global:LASTEXITCODE = 0
         Write-Host "      Adding Member: $m"
-        az devops security group membership add --group-id $devOpsGroup.descriptor --member-id $m
+        az devops security group membership add --org $org --group-id $devOpsGroup.descriptor --member-id $m
         if ($LASTEXITCODE -ne 0) { throw 'error' }
       }
     }
@@ -62,7 +64,7 @@ foreach ($item in $groups) {
       if (-not $item.members.Contains($u.mailAddress)) {
         $global:LASTEXITCODE = 0
         Write-Host "        Removing member $($u.mailAddress)"
-        az devops security group membership remove --group-id $devOpsGroup.descriptor --member-id $u.descriptor --yes
+        az devops security group membership remove --org $org --group-id $devOpsGroup.descriptor --member-id $u.descriptor --yes
         if ($LASTEXITCODE -ne 0) { throw 'error' }
       }
     }

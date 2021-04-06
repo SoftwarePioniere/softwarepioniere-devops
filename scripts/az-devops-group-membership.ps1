@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param (
+  [string] $org,
   [string] $project,
   [string] $pattern,
   [array] $members
@@ -10,17 +11,18 @@ Write-Host 'Group Membership'
 Write-Host '=============================='
 
 Write-Host "Project: $project" 
+Write-Host "Organization: $org" 
 
 $global:LASTEXITCODE = 0  
 if ($project) {
   Write-Host "  Loading Project Groups"
-  $groups = (az devops security group list --scope project --project $project --detect --output json) | ConvertFrom-Json
+  $groups = (az devops security group list --org $org --scope project --project $project --detect --output json) | ConvertFrom-Json
   $groups = $groups.graphGroups
   # $groups | ConvertTo-Json | Out-File "$($project).groups.json"
 } 
 else {
   Write-Host "  Loading Organization Groups"
-  $groups = (az devops security group list --scope organization --detect --output json) | ConvertFrom-Json
+  $groups = (az devops security group list --org $org --scope organization --detect --output json) | ConvertFrom-Json
   $groups = $groups.graphGroups
   # $groups | ConvertTo-Json | Out-File "organization.groups.json"
 }
@@ -34,7 +36,7 @@ if ($group) {
   Write-Host "    Group found: $($group.principalName)"
 
   Write-Host '      Loading Memberships into Array'
-  $memberships = (az devops security group membership list --id  $group.descriptor --detect --output json) | ConvertFrom-Json
+  $memberships = (az devops security group membership list --org $org --id  $group.descriptor --detect --output json) | ConvertFrom-Json
 
   $groupMembers = @()
 
@@ -59,7 +61,7 @@ if ($group) {
     else {     
       Write-Host "        Adding Member: $m"
       $global:LASTEXITCODE = 0
-      az devops security group membership add --group-id $group.descriptor --member-id $m --detect
+      az devops security group membership add --org $org --group-id $group.descriptor --member-id $m --detect
       if ($LASTEXITCODE -ne 0) { throw 'error' }
     }
   }
@@ -70,7 +72,7 @@ if ($group) {
     if (-not $members.Contains($u.mailAddress)) {    
       Write-Host "          Removing member $($u.mailAddress)"
       $global:LASTEXITCODE = 0
-      az devops security group membership remove --group-id $group.descriptor --member-id $u.descriptor --yes --detect
+      az devops security group membership remove --org $org --group-id $group.descriptor --member-id $u.descriptor --yes --detect
       if ($LASTEXITCODE -ne 0) { throw 'error' }
     }
   }

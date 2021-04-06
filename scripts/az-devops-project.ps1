@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param (
+  [string] $org,
   $name        = 'project-test3',
   $description = 'Das ist ein Test Projekt'
 )
@@ -7,12 +8,12 @@ param (
 Write-Host '=============================='
 Write-Host 'Creating Azure Devops Project'
 Write-Host '=============================='
-
+Write-Host "Organization: $org" 
 Write-Host "Project: $name" 
 
 $global:LASTEXITCODE = 0  
 Write-Host "  Loading Projects"
-[array] $existingProjects = (az devops project list --detect --output json) | ConvertFrom-Json
+[array] $existingProjects = (az devops project list --org $org --detect --output json) | ConvertFrom-Json
 $existingProjects = $existingProjects.value
 if ($LASTEXITCODE -ne 0) { throw 'error' }
 
@@ -25,7 +26,7 @@ else {
   Write-Host "  Creating Project.."
   
   $global:LASTEXITCODE = 0  
-  $pr = (az devops project create --name $name --description $description --detect) | ConvertFrom-Json
+  $pr = (az devops project create --org $org --name $name --description $description --detect) | ConvertFrom-Json
   if ($LASTEXITCODE -ne 0) { throw 'error' }
 }  
 

@@ -1,5 +1,7 @@
 [CmdletBinding()]
 param (
+  [string] $org,
+  [string] $project,
   [array] $pips = @(
     @{
       name  = 'sopidemo-azure-ad'      
@@ -15,8 +17,10 @@ param (
 Write-Host '=============================='
 Write-Host 'Creating Pipelines'
 Write-Host '=============================='
+Write-Host "Project: $project" 
+Write-Host "Organization: $org" 
 
-[array] $existingPipelines = (az pipelines  list --output json) | ConvertFrom-Json  
+[array] $existingPipelines = (az pipelines list --org $org --project $project --output json) | ConvertFrom-Json  
 $x = $pips[0]
 
 foreach ($x in $pips) {
@@ -32,6 +36,6 @@ foreach ($x in $pips) {
   else {
     Write-Host "    Creating Pipeline"
     # az repos create --name $x.name
-    az pipelines create --name $x.name --branch $x.branch --description $x.description --repository $x.repository --yaml-path $x.yamlpath --skip-first-run true --repository-type tfsgit
+    az pipelines create --org $org --project $project --name $x.name --branch $x.branch --description $x.description --repository $x.repository --yaml-path $x.yamlpath --skip-first-run true --repository-type tfsgit
   }
 }

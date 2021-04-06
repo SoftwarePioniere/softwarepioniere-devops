@@ -1,5 +1,7 @@
 [CmdletBinding()]
 param (
+  [string] $org,
+  [string] $project,
   [array] $creds = @(
     @{
       name             = 'sp-sopi2--tb-msdn--tb-sample-app2--contributor'
@@ -19,6 +21,8 @@ param (
 Write-Host '=============================='
 Write-Host 'Creating Service Principals and Service Connections'
 Write-Host '=============================='
+Write-Host "Project: $project" 
+Write-Host "Organization: $org" 
 
 # $cr = $creds[0]
 # $existingPrincipals | ConvertTo-Json | Out-File 'existingPrincipals.json'
@@ -67,7 +71,7 @@ foreach ($cr in $creds) {
       if ($cr.endpoint -and $sp) {    
         Write-Host "      Creating Service Endpoint"
         $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = $sp.password
-        az devops service-endpoint azurerm create --azure-rm-service-principal-id $sp.appId  --azure-rm-subscription-id $acc.id --azure-rm-subscription-name $acc.name --azure-rm-tenant-id $sp.tenant --name $cr.endpoint
+        az devops service-endpoint azurerm create --org $org --project $project --azure-rm-service-principal-id $sp.appId  --azure-rm-subscription-id $acc.id --azure-rm-subscription-name $acc.name --azure-rm-tenant-id $sp.tenant --name $cr.endpoint
         $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = ''
         if ($LASTEXITCODE -ne 0) { throw 'error' }        
       }    

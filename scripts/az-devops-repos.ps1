@@ -1,5 +1,7 @@
 [CmdletBinding()]
 param (
+  [string] $org,
+  [string] $project,
   [array] $repos = @(
     @{
       name             = 'tb-sample-app2-devops'      
@@ -11,8 +13,11 @@ param (
 Write-Host '=============================='
 Write-Host 'Creating Repositories'
 Write-Host '=============================='
+Write-Host "Project: $project" 
+Write-Host "Organization: $org" 
 
-[array] $existingRepos = (az repos list --output json) | ConvertFrom-Json  
+
+[array] $existingRepos = (az repos list --org $org --project $project --output json) | ConvertFrom-Json  
 
 foreach ($x in $repos) {
 
@@ -26,7 +31,7 @@ foreach ($x in $repos) {
   }
   else {
     Write-Host "    Creating Repo"
-    az repos create --name $x.name
+    az repos create --org $org --project $project --name $x.name
 
   }
 }
