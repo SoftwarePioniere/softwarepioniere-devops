@@ -519,20 +519,22 @@ namespace SoftwarePioniere.DevOps
                     }
 
                     Log(3, "Checking Groups to Add");
-                    foreach (var nick in myGroup.Groups)
-                    {
-                        Log(4, $"{nick}");
-                        var u = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == nick);
-                        if (u != null)
-                        {
-                            if (aadMembers.OfType<IActiveDirectoryGroup>().All(x => x.Id != u.Id))
-                            {
-                                Log(5, "Adding Group to Group");
-                                await group.Update()
-                                    .WithMember(u)
-                                    .ApplyAsync();
-                            }
-                        }
+                    if (myGroup.Groups != null) {
+                      foreach (var nick in myGroup.Groups)
+                      {
+                          Log(4, $"{nick}");
+                          var u = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == nick);
+                          if (u != null)
+                          {
+                              if (aadMembers.OfType<IActiveDirectoryGroup>().All(x => x.Id != u.Id))
+                              {
+                                  Log(5, "Adding Group to Group");
+                                  await group.Update()
+                                      .WithMember(u)
+                                      .ApplyAsync();
+                              }
+                          }
+                      }
                     }
                 }
             }
