@@ -28,7 +28,9 @@ namespace SoftwarePioniere.DevOps
                 var groupFilePatternOption = new Option<string>("--group-file-pattern",
                     () => "gruppen*.json",
                     "Pattern to read the Group Files");
-
+                var dryRunOption = new Option<bool>("--dry-run",
+                    "Just dry run. No changes");
+                
                 var aadShowCommand = new Command("show", "Parse and list the Data Files and Load From AAD")
                 {
                     loginAzCliOption,
@@ -57,11 +59,12 @@ namespace SoftwarePioniere.DevOps
                     dataDirOption,
                     defaultPassordOption,
                     userFilePatternOption,
-                    groupFilePatternOption
+                    groupFilePatternOption,
+                    dryRunOption
                 };
                 aadCommand.Add(aadDeployCommand);
                 aadDeployCommand.Handler =
-                    CommandHandler.Create<bool, string, string, string, string>(AadCommandHandler.HandleDeployCommand);
+                    CommandHandler.Create<bool, string, string, string, string,bool>(AadCommandHandler.HandleDeployCommand);
             }
 
             return await rootCommand.InvokeAsync(args);

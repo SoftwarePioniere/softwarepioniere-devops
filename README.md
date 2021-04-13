@@ -12,6 +12,10 @@ Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw
 # adding as submodule
 git submodule add https://github.com/SoftwarePioniere/softwarepioniere-devops.git
 
+# updating submodule
 git submodule foreach git pull origin main
 
+# pull submodules after clone
+git submodule init
+git submodule update
 ```
