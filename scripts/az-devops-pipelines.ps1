@@ -33,7 +33,7 @@ foreach ($x in $pips) {
   if ($exi) {
     Write-Host "    Pipeline found"
     Write-Host "   $($exi.remoteUrl)"
-    az pipelines update --org $org --project $project --name $x.name --description $x.description --new-folder-path $x.folder
+    az pipelines update --org $org --project $project --id $exi.id --description $x.description --new-folder-path $x.folder
 
   }
   else {
