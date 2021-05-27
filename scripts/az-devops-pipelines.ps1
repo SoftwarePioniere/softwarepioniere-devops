@@ -9,6 +9,7 @@ param (
       description = 'sopidemo Azure AD einrichten'
       repository = 'softwarepioniere-demo'
       yamlpath = 'azure-pipelines.yml'
+      folder = ''
     }
   )
 )
@@ -32,10 +33,12 @@ foreach ($x in $pips) {
   if ($exi) {
     Write-Host "    Pipeline found"
     Write-Host "   $($exi.remoteUrl)"
+    az pipelines update --org $org --project $project --name $x.name --description $x.description --new-folder-path $x.folder
+
   }
   else {
     Write-Host "    Creating Pipeline"
     # az repos create --name $x.name
-    az pipelines create --org $org --project $project --name $x.name --branch $x.branch --description $x.description --repository $x.repository --yaml-path $x.yamlpath --skip-first-run true --repository-type tfsgit
+    az pipelines create --org $org --project $project --name $x.name --branch $x.branch --description $x.description --repository $x.repository --yaml-path $x.yamlpath --skip-first-run true --repository-type tfsgit --folder-path $x.folder
   }
 }
