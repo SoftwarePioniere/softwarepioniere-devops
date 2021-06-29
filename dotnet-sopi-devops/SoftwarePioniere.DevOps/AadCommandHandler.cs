@@ -418,6 +418,20 @@ namespace SoftwarePioniere.DevOps
                         GivenName = item.Givenname,
                         DisplayName = item.Displayname
                     });
+
+                if (item.UseDefaultPassword)
+                {
+                    Log(3, "Updating UseDefaultPassword");
+                    await authenticated.ActiveDirectoryUsers.Inner.UpdateWithHttpMessagesAsync(cur.UserPrincipalName,
+                        new UserUpdateParameters
+                        {
+                            PasswordProfile = new PasswordProfile
+                            {
+                                Password = password,
+                                ForceChangePasswordNextLogin = false
+                            }
+                        });
+                }
             }
 
             return cur;
@@ -607,6 +621,9 @@ namespace SoftwarePioniere.DevOps
 
             [JsonPropertyName("upn")]
             public string Upn { get; set; }
+
+            [JsonPropertyName("default_passsword")]
+            public bool UseDefaultPassword { get; set; }
 
             public static MyUser Create(IActiveDirectoryUser aad)
             {
