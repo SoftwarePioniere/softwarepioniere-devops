@@ -43,22 +43,30 @@ namespace SoftwarePioniere.DevOps
             Log(0, "Deploy");
             Log(0, "===========================================");
 
+            
+            
             var myUsers = LoadUsersFromDisk(dataDir, userFilePattern);
             var myGroups = LoadGroupsFromDisk(dataDir, groupFilePattern);
 
-            try
-            {
-                await SyncUsersAsync(auth, myUsers, dataDir);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
+            await SyncUsersAsync(auth, myUsers, dataDir);
+          
             await SyncGroupsAsync(auth, myGroups);
 
             await SyncGroupMembers(auth, myGroups);
+            
+            
+            Log(0, "===========================================");
+            {
+                var json = JsonSerializer.Serialize(myUsers,
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    });
+                var file = $"deploy-{userFilePattern.Replace(".json", "").Replace("*", "-all")}.json";
+                Log(1, $"Writing Users JSON to {file}");
+                await File.WriteAllTextAsync(Path.Combine(dataDir, file), json, Encoding.UTF8);
+            }
 
             return 0;
         }
@@ -402,13 +410,13 @@ namespace SoftwarePioniere.DevOps
                         activeDirectoryUser.UserPrincipalName,
                         new UserUpdateParameters()
                         //{
-                            // PasswordProfile = new PasswordProfile(password)
-                             // PasswordProfile = new PasswordProfile(SdkContext.RandomResourceName("Pa5$", 15))
-                            // {
-                            //     ForceChangePasswordNextLogin = false
-                            // }
-                //        }
-                );
+                        // PasswordProfile = new PasswordProfile(password)
+                        // PasswordProfile = new PasswordProfile(SdkContext.RandomResourceName("Pa5$", 15))
+                        // {
+                        //     ForceChangePasswordNextLogin = false
+                        // }
+                        //        }
+                    );
 
                     var cont = await respo.Response.Content.ReadAsStringAsync();
                     Log(3,
@@ -461,7 +469,7 @@ namespace SoftwarePioniere.DevOps
                 cur = await authenticated.ActiveDirectoryUsers
                     .Define(item.Displayname)
                     .WithUserPrincipalName(item.Upn)
-                //  .WithPassword(password)
+                    //  .WithPassword(password)
                     .WithPassword(SdkContext.RandomResourceName("Pa5$", 15))
                     .WithPromptToChangePasswordOnLogin(false)
                     .CreateAsync();
@@ -481,15 +489,24 @@ namespace SoftwarePioniere.DevOps
                 Log(3, $"Updating User: {cur.UserPrincipalName}");
                 Log(3, cur);
 
+                var parameters = new UserUpdateParameters
+                {
+                    Surname = item.Surname,
+                    GivenName = item.Givenname,
+                    DisplayName = item.Displayname
+                };
+
+              //   if (item.UseDefaultPassword)
+              //   {
+              //       parameters.AdditionalProperties = new Dictionary<string, object>();
+              //       
+              // //      parameters.AdditionalProperties.Add("UseDefaultPassword", item.UseDefaultPassword.ToString());
+              //   }
+
                 await authenticated.ActiveDirectoryUsers.Inner.UpdateWithHttpMessagesAsync(cur.UserPrincipalName,
-                    new UserUpdateParameters
-                    {
-                        Surname = item.Surname,
-                        GivenName = item.Givenname,
-                        DisplayName = item.Displayname
-                    });
+                    parameters);
                 //
-                
+
                 await ApplyPassword(cur);
             }
 
