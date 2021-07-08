@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,14 +8,12 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Microsoft.Azure.Management.Compute.Fluent.Models;
 using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.Graph.RBAC.Fluent;
 using Microsoft.Azure.Management.Graph.RBAC.Fluent.Models;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
-using Polly;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable PropertyCanBeMadeInitOnly.Local
@@ -250,7 +249,7 @@ namespace SoftwarePioniere.DevOps
                 {
                     Log(1, $"{file}");
                     var content = File.ReadAllText(file);
-                    return JsonSerializer.Deserialize<T[]>(content);
+                    return JsonSerializer.Deserialize<T[]>(content) ?? throw new InvalidOperationException();
                 })
                 .ToArray();
         }
@@ -341,7 +340,7 @@ namespace SoftwarePioniere.DevOps
             return auth;
         }
 
-        private static async Task<IActiveDirectoryGroup> ProcessGroupAsync(MyGroup item, IActiveDirectoryGroup[] list,
+        private static async Task<IActiveDirectoryGroup?> ProcessGroupAsync(MyGroup item, IActiveDirectoryGroup[] list,
             Azure.IAuthenticated authenticated)
         {
             Log(0, "===========================================");
@@ -389,10 +388,11 @@ namespace SoftwarePioniere.DevOps
             return cur;
         }
 
-        private static async Task<IActiveDirectoryUser> ProcessUserAsync(MyUser item, IActiveDirectoryUser[] list,
+        private static async Task<IActiveDirectoryUser?> ProcessUserAsync(MyUser item, IActiveDirectoryUser[] list,
+            // ReSharper disable once UnusedParameter.Local
             Azure.IAuthenticated authenticated, string password)
         {
-            async Task ApplyPassword(IActiveDirectoryUser? activeDirectoryUser)
+            async Task ApplyPassword(IActiveDirectoryUser activeDirectoryUser)
             {
                 if (item.UseDefaultPassword)
                 {
@@ -400,14 +400,15 @@ namespace SoftwarePioniere.DevOps
 
                     var respo = await authenticated.ActiveDirectoryUsers.Inner.UpdateWithHttpMessagesAsync(
                         activeDirectoryUser.UserPrincipalName,
-                        new UserUpdateParameters
-                        {
+                        new UserUpdateParameters()
+                        //{
                             // PasswordProfile = new PasswordProfile(password)
                              // PasswordProfile = new PasswordProfile(SdkContext.RandomResourceName("Pa5$", 15))
                             // {
                             //     ForceChangePasswordNextLogin = false
                             // }
-                        });
+                //        }
+                );
 
                     var cont = await respo.Response.Content.ReadAsStringAsync();
                     Log(3,
@@ -593,21 +594,18 @@ namespace SoftwarePioniere.DevOps
                     }
 
                     Log(3, "Checking Groups to Add");
-                    if (myGroup.Groups != null)
+                    foreach (var nick in myGroup.Groups)
                     {
-                        foreach (var nick in myGroup.Groups)
+                        Log(4, $"{nick}");
+                        var u = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == nick);
+                        if (u != null)
                         {
-                            Log(4, $"{nick}");
-                            var u = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == nick);
-                            if (u != null)
+                            if (aadMembers.OfType<IActiveDirectoryGroup>().All(x => x.Id != u.Id))
                             {
-                                if (aadMembers.OfType<IActiveDirectoryGroup>().All(x => x.Id != u.Id))
-                                {
-                                    Log(5, "Adding Group to Group");
-                                    await group.Update()
-                                        .WithMember(u)
-                                        .ApplyAsync();
-                                }
+                                Log(5, "Adding Group to Group");
+                                await @group.Update()
+                                    .WithMember(u)
+                                    .ApplyAsync();
                             }
                         }
                     }
@@ -645,16 +643,16 @@ namespace SoftwarePioniere.DevOps
             public bool Delete { get; set; }
 
             [JsonPropertyName("nick")]
-            public string MailNickname { get; set; }
+            public string? MailNickname { get; set; }
 
             [JsonPropertyName("members")]
-            public string[] Members { get; set; }
+            public string[]? Members { get; set; }
 
             [JsonPropertyName("name")]
-            public string Name { get; set; }
+            public string? Name { get; set; }
 
             [JsonPropertyName("groups")]
-            public string[] Groups { get; set; }
+            public string[]? Groups { get; set; }
 
             public static MyGroup Create(IActiveDirectoryGroup aad)
             {
@@ -672,16 +670,16 @@ namespace SoftwarePioniere.DevOps
             public bool Delete { get; set; }
 
             [JsonPropertyName("anzeige")]
-            public string Displayname { get; set; }
+            public string? Displayname { get; set; }
 
             [JsonPropertyName("vorname")]
-            public string Givenname { get; set; }
+            public string? Givenname { get; set; }
 
             [JsonPropertyName("nachname")]
-            public string Surname { get; set; }
+            public string? Surname { get; set; }
 
             [JsonPropertyName("upn")]
-            public string Upn { get; set; }
+            public string? Upn { get; set; }
 
             [JsonPropertyName("default_passsword")]
             public bool UseDefaultPassword { get; set; }
