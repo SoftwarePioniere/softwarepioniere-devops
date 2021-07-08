@@ -7,12 +7,14 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.Azure.Management.Compute.Fluent.Models;
 using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.Graph.RBAC.Fluent;
 using Microsoft.Azure.Management.Graph.RBAC.Fluent.Models;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
+using Polly;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable PropertyCanBeMadeInitOnly.Local
@@ -45,7 +47,16 @@ namespace SoftwarePioniere.DevOps
             var myUsers = LoadUsersFromDisk(dataDir, userFilePattern);
             var myGroups = LoadGroupsFromDisk(dataDir, groupFilePattern);
 
-            await SyncUsersAsync(auth, myUsers, dataDir);
+            try
+            {
+                await SyncUsersAsync(auth, myUsers, dataDir);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
             await SyncGroupsAsync(auth, myGroups);
 
             await SyncGroupMembers(auth, myGroups);
@@ -381,6 +392,29 @@ namespace SoftwarePioniere.DevOps
         private static async Task<IActiveDirectoryUser> ProcessUserAsync(MyUser item, IActiveDirectoryUser[] list,
             Azure.IAuthenticated authenticated, string password)
         {
+            async Task ApplyPassword(IActiveDirectoryUser? activeDirectoryUser)
+            {
+                if (item.UseDefaultPassword)
+                {
+                    Log(3, $"Updating UseDefaultPassword: {activeDirectoryUser.UserPrincipalName}");
+
+                    var respo = await authenticated.ActiveDirectoryUsers.Inner.UpdateWithHttpMessagesAsync(
+                        activeDirectoryUser.UserPrincipalName,
+                        new UserUpdateParameters
+                        {
+                            // PasswordProfile = new PasswordProfile(password)
+                             // PasswordProfile = new PasswordProfile(SdkContext.RandomResourceName("Pa5$", 15))
+                            // {
+                            //     ForceChangePasswordNextLogin = false
+                            // }
+                        });
+
+                    var cont = await respo.Response.Content.ReadAsStringAsync();
+                    Log(3,
+                        $"Updating UseDefaultPassword Responce: {activeDirectoryUser.UserPrincipalName}: {respo.Response.StatusCode} {cont}");
+                }
+            }
+
             Log(0, "===========================================");
             Log(0, "Processing User");
             Log(1, item);
@@ -389,26 +423,61 @@ namespace SoftwarePioniere.DevOps
 
             if (cur == null && !item.Delete)
             {
-                Log(3, "Creating User");
+                Log(3, $"Creating User: {item.Upn}");
+
+                // var userCreateParameters = new UserCreateParameters()
+                // {
+                //     MailNickname = item.Upn,
+                //     Surname = item.Surname,
+                //     GivenName = item.Givenname,
+                //     DisplayName = item.Displayname,
+                //     UserPrincipalName = item.Upn,
+                //     UserType = UserType.Member,
+                //     PasswordProfile = new PasswordProfile(SdkContext.RandomResourceName("Pa5$", 15))
+                //     // {
+                //     //     Password = SdkContext.RandomResourceName("Pa5$",
+                //     //         15), // Guid.NewGuid().ToString(), // password,
+                //     //     ForceChangePasswordNextLogin = false
+                //     // }
+                // };
+                // userCreateParameters.Validate();
+                // //
+                // var inner = await authenticated.ActiveDirectoryUsers.Inner.CreateWithHttpMessagesAsync(
+                //     userCreateParameters
+                // );
+                // //
+                // Policy.Handle<Exception>()
+                //     .RetryAsync(5,
+                //         async (exception, i) =>
+                //         {
+                //             cur = await authenticated.ActiveDirectoryUsers.GetByIdAsync(inner.Body.ObjectId);
+                //
+                //             if (cur == null)
+                //                 throw new Exception();
+                //         });
 
 
                 cur = await authenticated.ActiveDirectoryUsers
                     .Define(item.Displayname)
                     .WithUserPrincipalName(item.Upn)
-                    .WithPassword(password)
+                //  .WithPassword(password)
+                    .WithPassword(SdkContext.RandomResourceName("Pa5$", 15))
+                    .WithPromptToChangePasswordOnLogin(false)
                     .CreateAsync();
+
+                await ApplyPassword(cur);
             }
 
             if (cur != null)
             {
                 if (item.Delete)
                 {
-                    Log(3, "Deleting User");
+                    Log(3, $"Deleting User: {cur.UserPrincipalName}");
                     await authenticated.ActiveDirectoryUsers.DeleteByIdAsync(cur.Id);
                     return null;
                 }
 
-                Log(3, "Updating User");
+                Log(3, $"Updating User: {cur.UserPrincipalName}");
                 Log(3, cur);
 
                 await authenticated.ActiveDirectoryUsers.Inner.UpdateWithHttpMessagesAsync(cur.UserPrincipalName,
@@ -418,22 +487,13 @@ namespace SoftwarePioniere.DevOps
                         GivenName = item.Givenname,
                         DisplayName = item.Displayname
                     });
-
-                if (item.UseDefaultPassword)
-                {
-                    Log(3, "Updating UseDefaultPassword");
-                    await authenticated.ActiveDirectoryUsers.Inner.UpdateWithHttpMessagesAsync(cur.UserPrincipalName,
-                        new UserUpdateParameters
-                        {
-                            PasswordProfile = new PasswordProfile
-                            {
-                                Password = password,
-                                ForceChangePasswordNextLogin = false
-                            }
-                        });
-                }
+                //
+                
+                await ApplyPassword(cur);
             }
 
+            if (cur != null)
+                Log(0, $"Finished Processing: {cur.UserPrincipalName}");
             return cur;
         }
 
@@ -533,22 +593,23 @@ namespace SoftwarePioniere.DevOps
                     }
 
                     Log(3, "Checking Groups to Add");
-                    if (myGroup.Groups != null) {
-                      foreach (var nick in myGroup.Groups)
-                      {
-                          Log(4, $"{nick}");
-                          var u = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == nick);
-                          if (u != null)
-                          {
-                              if (aadMembers.OfType<IActiveDirectoryGroup>().All(x => x.Id != u.Id))
-                              {
-                                  Log(5, "Adding Group to Group");
-                                  await group.Update()
-                                      .WithMember(u)
-                                      .ApplyAsync();
-                              }
-                          }
-                      }
+                    if (myGroup.Groups != null)
+                    {
+                        foreach (var nick in myGroup.Groups)
+                        {
+                            Log(4, $"{nick}");
+                            var u = aadGroups.FirstOrDefault(x => x.Inner.MailNickname == nick);
+                            if (u != null)
+                            {
+                                if (aadMembers.OfType<IActiveDirectoryGroup>().All(x => x.Id != u.Id))
+                                {
+                                    Log(5, "Adding Group to Group");
+                                    await group.Update()
+                                        .WithMember(u)
+                                        .ApplyAsync();
+                                }
+                            }
+                        }
                     }
                 }
             }

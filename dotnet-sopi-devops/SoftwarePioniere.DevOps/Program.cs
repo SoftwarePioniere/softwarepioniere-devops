@@ -1,5 +1,7 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SoftwarePioniere.DevOps
@@ -14,10 +16,12 @@ namespace SoftwarePioniere.DevOps
                 var aadCommand = new Command("aad");
                 rootCommand.Add(aadCommand);
 
+                var tempdir = @"c:\temp\aad-dev";
+                
                 var loginAzCliOption = new Option<bool>("--login-az-cli",
                     "Login from az cli Service Principial, not from Environment vars");
                 var dataDirOption = new Option<string>("--data-dir",
-                    () => "c://temp/aad-dev",
+                    () => tempdir,
                     "The Directory which contains the data files. Defaults to Current Directory");
                 var defaultPassordOption = new Option<string>("--default-password",
                     () => "Password01",

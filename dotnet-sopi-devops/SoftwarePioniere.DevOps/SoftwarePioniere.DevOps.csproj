@@ -9,9 +9,15 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Management.Fluent" />
-    <PackageReference Include="Microsoft.Azure.Management.Graph.RBAC.Fluent" />
+    <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.37.1" />
+    <PackageReference Include="Microsoft.Azure.Management.Graph.RBAC.Fluent" Version="1.37.1" />
+    <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Update="MinVer" Version="2.5.0" />
   </ItemGroup>
 
 </Project>
