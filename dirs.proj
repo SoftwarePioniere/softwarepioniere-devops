@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.Build.Traversal" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup>
+        <!-- Build all projects recursively under the "src" folder -->
+        <ProjectReference Include="src\**\*.*proj"/>
+    </ItemGroup>
+</Project>

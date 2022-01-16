@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sopi-devops", "src\sopi-devops\sopi-devops.csproj", "{FC6A5C46-918F-47AC-934D-187B9C2A9E5A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{89A324CE-FEBB-4ED7-BAC7-713DD5C92CB8}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
+		README.md = README.md
+		nuget.config = nuget.config
+		dirs.proj = dirs.proj
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC6A5C46-918F-47AC-934D-187B9C2A9E5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC6A5C46-918F-47AC-934D-187B9C2A9E5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC6A5C46-918F-47AC-934D-187B9C2A9E5A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CF38ED64-D532-4D65-A905-348B75D07512}
+	EndGlobalSection
+EndGlobal

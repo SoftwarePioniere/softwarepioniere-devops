@@ -5,3 +5,6 @@ bin
 obj
 .idea
 .vs
+temp
+nupkg
+artifacts
