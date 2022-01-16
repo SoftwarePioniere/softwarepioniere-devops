@@ -20,6 +20,9 @@ dotnet tool update minver-cli --local
 # build sdk 
 https://github.com/microsoft/MSBuildSdks/blob/main/src/Traversal/README.md
 
+# link to Azure SDK
+https://github.com/Azure/azure-libraries-for-net
+
 ```   
 
 ## Use pscore scripts
