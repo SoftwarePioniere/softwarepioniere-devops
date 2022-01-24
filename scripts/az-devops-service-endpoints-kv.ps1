@@ -49,10 +49,15 @@ foreach ($ep in $endpoints) {
     if ($LASTEXITCODE -ne 0) { throw 'error' }     
       
     $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = $principalSecret
+
+    Write-Host "az devops service-endpoint azurerm create --name $name --azure-rm-service-principal-id $principalId --azure-rm-subscription-id $subscriptionId --azure-rm-subscription-name $subscriptionName --azure-rm-tenant-id $tenantId --org $org --project $project"
+
     az devops service-endpoint azurerm create --name $name --azure-rm-service-principal-id $principalId --azure-rm-subscription-id $subscriptionId --azure-rm-subscription-name $subscriptionName --azure-rm-tenant-id $tenantId --org $org --project $project 
-  
+
     $env:AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY = ''
-    if ($LASTEXITCODE -ne 0) { throw 'error' }  
+    # if ($LASTEXITCODE -ne 0) { throw 'error' }  
+
+    $global:LASTEXITCODE = 0  
   }     
       
 

@@ -21,7 +21,7 @@ Write-Host "Organization: $org"
 # Write-Host $extensions
 
 foreach ($item in $extensions) {
-
+  Write-Host '=========================================================================================='
   Write-Host "Extension: $($item.extensionid)" 
   $ext = (az devops extension show --org $org --extension-id $item.extensionid --publisher-id $item.publisherid --detect --output json) | ConvertFrom-Json
   $global:LASTEXITCODE = 0  

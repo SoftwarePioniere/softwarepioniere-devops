@@ -27,6 +27,7 @@ $acc | ConvertTo-Json | Out-File "secret-$($subscription).json"
 
 $pri = $princs[0]
 foreach ($pri in $princs) {
+  Write-Host '=========================================================================================='
   $name = $pri.name
   Write-Host "Principal Name: $name" 
 
