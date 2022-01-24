@@ -67,7 +67,7 @@ foreach ($pri in $princs) {
   
   if ($pri.reset) {
     Write-Host "Resetting Credentials"
-    $sp = (az ad sp credential reset --name $name --output json) | ConvertFrom-Json
+    $sp = (az ad sp credential reset --name $name --years 10 --output json) | ConvertFrom-Json
 
     if ($LASTEXITCODE -ne 0) { throw 'error' }
     $sp | ConvertTo-Json | Out-File "secret-$($name).json"
