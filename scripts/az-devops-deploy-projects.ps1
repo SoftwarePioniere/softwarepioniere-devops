@@ -20,7 +20,7 @@ Write-Host "Organization: $org"
 
 Write-Host '=========================================================================================='
 
-$projectfiles = Get-ChildItem -Path 'projects'
+$projectfiles = Get-ChildItem -Path $projectsFolder
 
 Push-Location $PSScriptRoot
 
