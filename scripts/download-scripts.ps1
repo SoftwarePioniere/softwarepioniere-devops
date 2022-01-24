@@ -4,6 +4,8 @@ param (
   $path   = 'downloaded-scripts',
   $scripts = @(
     'az-aad-service-principal.ps1',
+    'az-aad-service-principals-2',
+    'az-devops-deploy-organization.ps1'
     'az-devops-extensions.ps1',
     'az-devops-group-membership.ps1',
     'az-devops-org-security.ps1',
