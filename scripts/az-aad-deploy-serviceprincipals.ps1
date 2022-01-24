@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-  [switch] $serviceprincipalsFile,
+  [string] $serviceprincipalsFile,
   [string] $keyVaultSubscription = 'sopi-mpn-02',
   [string] $keyVaultName = 'sopi-secrets'
 )
@@ -104,5 +104,5 @@ foreach ($sub in $data) {
       Write-Host " One File not found"
     }
   }
-
 }
+Pop-Location
