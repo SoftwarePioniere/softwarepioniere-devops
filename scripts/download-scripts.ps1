@@ -3,6 +3,7 @@ param (
   $baseUrl = 'https://raw.githubusercontent.com/SoftwarePioniere/softwarepioniere-devops/main/scripts/',
   $path   = 'downloaded-scripts',
   $scripts = @(
+    'az-aad-deploy-serviceprincipals.ps1',
     'az-aad-service-principal.ps1',
     'az-aad-service-principals-2',
     'az-devops-deploy-organization.ps1'
