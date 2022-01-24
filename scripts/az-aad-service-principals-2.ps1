@@ -33,9 +33,9 @@ foreach ($pri in $princs) {
 
   # service principal
   [array] $existingPrincipals = (az ad sp list --all --output json) | ConvertFrom-Json
-  $exi = $existingPrincipals | Where-Object -Property appDisplayName -like $name | Select-Object -first 1
+  $sp = $existingPrincipals | Where-Object -Property appDisplayName -like $name | Select-Object -first 1
 
-  if ($exi) {
+  if ($sp) {
     Write-Host "    SP found"
   }
   else {
