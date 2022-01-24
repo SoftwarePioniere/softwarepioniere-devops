@@ -5,7 +5,7 @@ param (
   $scripts = @(
     'az-aad-deploy-serviceprincipals.ps1',
     'az-aad-service-principal.ps1',
-    'az-aad-service-principals-2',
+    'az-aad-service-principals-2.ps1',
     'az-devops-deploy-organization.ps1'
     'az-devops-extensions.ps1',
     'az-devops-group-membership.ps1',
