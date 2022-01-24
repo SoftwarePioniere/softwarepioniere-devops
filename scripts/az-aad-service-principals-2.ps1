@@ -92,4 +92,7 @@ foreach ($pri in $princs) {
     }    
   }
 
+
+  Write-Host "Principal OK: $name"
+
 }

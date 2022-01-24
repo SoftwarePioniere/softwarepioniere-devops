@@ -3,9 +3,7 @@ param (
   [string] $org,
   [string] $project,
   [array] $repos = @(
-    @{
-      name             = 'tb-sample-app2-devops'      
-    }
+     'tb-sample-app2-devops'
   )
 )
 
@@ -21,8 +19,8 @@ Write-Host "Organization: $org"
 
 foreach ($x in $repos) {
 
-  Write-Host "  $($x.name)" 
-  $exi = $existingRepos | Where-Object -Property name -like $x.name | Select-Object -first 1
+  Write-Host "  $($x)" 
+  $exi = $existingRepos | Where-Object -Property name -like $x | Select-Object -first 1
   # $exPrinc
 
   if ($exi) {
@@ -31,7 +29,7 @@ foreach ($x in $repos) {
   }
   else {
     Write-Host "    Creating Repo"
-    az repos create --org $org --project $project --name $x.name
+    az repos create --org $org --project $project --name $x
 
   }
 }
