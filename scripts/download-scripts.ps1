@@ -7,6 +7,7 @@ param (
     'az-aad-service-principal.ps1',
     'az-aad-service-principals-2.ps1',
     'az-devops-deploy-organization.ps1'
+    'az-devops-deploy-projects.ps1',
     'az-devops-extensions.ps1',
     'az-devops-group-membership.ps1',
     'az-devops-org-security.ps1',
@@ -14,8 +15,8 @@ param (
     'az-devops-project.ps1',
     'az-devops-projects.ps1',
     'az-devops-repos.ps1',
-    'az-devops-service-endpoint.ps1'
-    'az-devops-service-endpoints-kv.ps1'
+    'az-devops-service-endpoint.ps1',
+    'az-devops-service-endpoints-kv.ps1',
     'az-devops-service-principals.ps1'
   )
 )
