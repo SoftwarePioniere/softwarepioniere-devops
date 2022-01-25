@@ -189,29 +189,6 @@ internal static class MyAzure
         return 0;
     }
 
-    public static async Task<int> ListSubscriptions(bool loginAzCli)
-    {
-        Console.WriteLine($"{nameof(loginAzCli)}: {loginAzCli}");
-        var authenticated = Login(loginAzCli);
-
-        {
-            var items = await LoadPagedCollectionAsync(authenticated.Tenants.ListAsync());
-            Log(0, "===========================================");
-            Log(0, "Tenants");
-            Log(0, "===========================================");
-            foreach (var x in items) Log(2, $"{x.TenantId}");
-        }
-        {
-            var items = await LoadPagedCollectionAsync(authenticated.Subscriptions.ListAsync());
-
-            Log(0, "===========================================");
-            Log(0, "Subscriptions");
-            Log(0, "===========================================");
-            foreach (var x in items) Log(2, $"{x.DisplayName} | {x.SubscriptionId}");
-        }
-        return 0;
-    }
-
     public static async Task<T[]> LoadPagedCollectionAsync<T>(Task<IPagedCollection<T>> listAsync)
     {
         var list = new List<T>();

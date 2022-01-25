@@ -2,6 +2,6 @@
 
 public class WorkerParams
 {
-    public string BaseUrl { get; set; }
     
+    public string[] Args { get; set; }
 }

@@ -14,4 +14,6 @@
 
 dotnet sopi-devops --help
 
+dotnet run --project ./../src/sopi-devops/sopi-devops.csproj -- --help
+
 ```

@@ -1,4 +1,4 @@
-name: .NET
+name: dotnet-sopi-devops
 
 on:
   push:
@@ -12,24 +12,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
     - uses: actions/checkout@v2
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
+      with:        
+        dotnet-version: 6.0.x
+
     - name: Restore dependencies
-      run: dotnet restore
-      working-directory: dotnet-sopi-devops
+      run: dotnet restore dirs.proj -v m --nologo
+
     - name: Build
-      run: dotnet build --no-restore
-      working-directory: dotnet-sopi-devops
+      run: dotnet build dirs.proj --configuration Release -v m --nologo --no-restore
+ 
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-      working-directory: dotnet-sopi-devops
+      run: dotnet test dirs.proj --configuration Release --no-build --logger:trx --no-build --no-restore
+      
     - name: Pack
-      run: dotnet pack --no-build --verbosity normal
-      working-directory: dotnet-sopi-devops
-    - name: push package
-      run: dotnet nuget push "*.nupkg" -k $NUGET_API_KEY
-      working-directory: dotnet-sopi-devops/SoftwarePioniere.DevOps/nupkg
+      run: dotnet pack dirs.proj --configuration Release -v m --nologo --no-restore --output artifacts
+
+    # - name: push package
+    #   run: dotnet nuget push "*.nupkg" -k $NUGET_API_KEY
+    #   working-directory: dotnet-sopi-devops/SoftwarePioniere.DevOps/nupkg
 

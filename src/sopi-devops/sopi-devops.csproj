@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,7 +13,16 @@
     <PackageReference Include="Microsoft.Azure.Management.Fluent" />
     <PackageReference Include="Microsoft.Azure.Management.Graph.RBAC.Fluent" />
     <PackageReference Include="Polly" />
+    <PackageReference Include="SimpleExec" />
     <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Sinks.Literate" />
+    
   </ItemGroup>
 
 </Project>
