@@ -5,6 +5,18 @@ Software Pioniere DevOps Scripts and Tools
 # Packages
 
 ```
+
+dotnet tool restore
+
+# install outdated too local
+dotnet tool install --local dotnet-tools-outdated
+dotnet tool install dotnet-tools-outdated
+
+# check for outdated tools
+dotnet dotnet-tools-outdated
+dotnet dotnet-tools-outdated --toolPath ./.config
+
+
 # find outdated packages
 dotnet list package --outdated --highest-minor
 dotnet list package --outdated
