@@ -2,6 +2,5 @@
 
 public class WorkerParams
 {
-    
     public string[] Args { get; set; }
 }

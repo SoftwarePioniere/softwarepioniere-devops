@@ -32,36 +32,6 @@ public sealed class TypeResolver : ITypeResolver, IDisposable
     }
 }
 
-public sealed class TypeRegistrar2 : ITypeRegistrar
-{
-    private readonly IServiceProvider _serviceProvider;
-
-    public TypeRegistrar2(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
-    public void Register(Type service, Type implementation)
-    {
-     
-    }
-
-    public void RegisterInstance(Type service, object implementation)
-    {
-       
-    }
-
-    public void RegisterLazy(Type service, Func<object> factory)
-    {
-       
-    }
-
-    public ITypeResolver Build()
-    {
-        return new TypeResolver(_serviceProvider);
-    }
-}
-
 public sealed class TypeRegistrar : ITypeRegistrar
 {
     private readonly IServiceCollection _builder;

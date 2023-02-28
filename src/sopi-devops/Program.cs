@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Spectre.Console.Cli;
 
 
 namespace SoftwarePioniere.DevOps
@@ -32,6 +33,8 @@ namespace SoftwarePioniere.DevOps
 
                         services.AddOptions<WorkerParams>()
                             .PostConfigure(p => { p.Args = args; });
+
+                        services.AddSingleton<ITypeRegistrar>(new TypeRegistrar(services));
 
                         services.AddHostedService<Worker>();
                     })
