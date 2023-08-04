@@ -11,6 +11,7 @@ param (
     'az-devops-extensions.ps1',
     'az-devops-group-membership.ps1',
     'az-devops-org-security.ps1',
+    'az-devops-org-users.ps1',
     'az-devops-pipelines.ps1',
     'az-devops-project.ps1',
     'az-devops-projects.ps1',
