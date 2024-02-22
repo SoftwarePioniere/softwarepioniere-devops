@@ -26,17 +26,14 @@ internal static class Program
                 )
                 .ConfigureServices(services =>
                 {
-                    services
-                        .AddSingleton<SubscriptionWorker>()
-                        .AddSingleton<AzureAdWorker>()
-                        ;
-
                     services.AddOptions<WorkerParams>()
-                        .PostConfigure(p => { p.Args = args; });
+                        .PostConfigure(p => p.Args = args);
 
-                    services.AddSingleton<ITypeRegistrar>(new TypeRegistrar(services));
-
-                    services.AddHostedService<Worker>();
+                    services
+                        .AddSingleton<ITypeRegistrar>(new TypeRegistrar(services))
+                        .RegisterServices()
+                        .AddHostedService<Worker>()
+                        ;
                 })
                 .Build();
 

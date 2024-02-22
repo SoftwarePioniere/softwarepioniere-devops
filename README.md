@@ -2,9 +2,9 @@
 
 Software Pioniere DevOps Scripts and Tools
 
-# Packages
+## Packages
 
-```
+```powershell
 
 dotnet tool restore
 
@@ -26,16 +26,16 @@ dotnet snitch
 
 # update versions in file: Directory.Build.targets
 
-# update local installed dotnet tools 
+# update local installed dotnet tools
 dotnet tool update minver-cli --local
 
-# build sdk 
+# build sdk
 https://github.com/microsoft/MSBuildSdks/blob/main/src/Traversal/README.md
 
 # link to Azure SDK
 https://github.com/Azure/azure-libraries-for-net
 
-```   
+```
 
 ## Use pscore scripts
 
@@ -54,9 +54,7 @@ git submodule init
 git submodule update
 ```
 
-
-
-## Run
+## Run dotnet
 
 ```powershell
 

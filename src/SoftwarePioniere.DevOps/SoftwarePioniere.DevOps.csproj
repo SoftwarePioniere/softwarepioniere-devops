@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>  
     <PackAsTool>true</PackAsTool>
+    <IsPackable>true</IsPackable>
     <PackageId>sopi-devops</PackageId>
     <ToolCommandName>sopi-devops</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>

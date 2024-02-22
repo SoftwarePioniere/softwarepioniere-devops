@@ -19,9 +19,9 @@ using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
 // ReSharper disable PropertyCanBeMadeInitOnly.Local
 // ReSharper disable MemberCanBePrivate.Local
 
-namespace SoftwarePioniere.DevOps;
+namespace SoftwarePioniere.DevOps.Services;
 
-internal static class MyAzure
+internal static class AzureUtils
 {
     public static async Task<int> DeployAadUsersAndGroups(bool loginAzCli, string dataDir, string defaultPassword,
         string userFilePattern, string groupFilePattern, bool dryRun)
@@ -215,7 +215,7 @@ internal static class MyAzure
         else
         {
             Log(0, "Login from Environment");
-            //$env:servicePrincipalId, $env:servicePrincipalKey and $env:tenantId 
+            //$env:servicePrincipalId, $env:servicePrincipalKey and $env:tenantId
             var client = Environment.GetEnvironmentVariable("servicePrincipalId");
             var key = Environment.GetEnvironmentVariable("servicePrincipalKey");
             var tenant = Environment.GetEnvironmentVariable("tenantId");
@@ -382,7 +382,7 @@ internal static class MyAzure
             //     Log(2, "Recreating Group");
             //     await authenticated.ActiveDirectoryGroups.DeleteByIdAsync(cur.Id);
             //
-            //     
+            //
             //     cur = await authenticated.ActiveDirectoryGroups
             //         .Define(item.Name)
             //         .WithEmailAlias(item.MailNickname)
@@ -498,7 +498,7 @@ internal static class MyAzure
             //   if (item.UseDefaultPassword)
             //   {
             //       parameters.AdditionalProperties = new Dictionary<string, object>();
-            //       
+            //
             // //      parameters.AdditionalProperties.Add("UseDefaultPassword", item.UseDefaultPassword.ToString());
             //   }
 

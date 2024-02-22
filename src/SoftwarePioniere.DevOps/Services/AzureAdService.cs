@@ -1,29 +1,24 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace SoftwarePioniere.DevOps;
+namespace SoftwarePioniere.DevOps.Services;
 
-public class AzureAdWorker
+public class AzureAdService(ILoggerFactory loggerFactory)
 {
-    private readonly ILogger _logger;
-
-    public AzureAdWorker(ILoggerFactory loggerFactory)
-    {
-        _logger = loggerFactory.CreateLogger("AAD");
-    }
+    private readonly ILogger _logger = loggerFactory.CreateLogger("AAD");
 
     public async Task ShowAadUsersAndGroups(bool loginAzCli, string dataDir, string userFilePattern,
         string groupFilePattern)
     {
         _logger.LogInformation("{Operation} {LoginWithAzCli}", nameof(ShowAadUsersAndGroups), loginAzCli);
-        await MyAzure.ShowAadUsersAndGroups(loginAzCli, dataDir, userFilePattern, groupFilePattern);
+        await AzureUtils.ShowAadUsersAndGroups(loginAzCli, dataDir, userFilePattern, groupFilePattern);
     }
 
     public async Task ExportAadUsersAndGroups(bool loginAzCli, string dataDir, string userFilePattern,
         string groupFilePattern)
     {
         _logger.LogInformation("{Operation} {LoginWithAzCli}", nameof(ExportAadUsersAndGroups), loginAzCli);
-        await MyAzure.ExportAadUsersAndGroups(loginAzCli, dataDir, userFilePattern, groupFilePattern);
+        await AzureUtils.ExportAadUsersAndGroups(loginAzCli, dataDir, userFilePattern, groupFilePattern);
     }
 
     public async Task DeployAadUsersAndGroups(bool loginAzCli, string dataDir, string defaultPassword,
@@ -31,7 +26,7 @@ public class AzureAdWorker
         string groupFilePattern, bool dryRun)
     {
         _logger.LogInformation("{Operation} {LoginWithAzCli}", nameof(DeployAadUsersAndGroups), loginAzCli);
-        await MyAzure.DeployAadUsersAndGroups(loginAzCli,
+        await AzureUtils.DeployAadUsersAndGroups(loginAzCli,
             dataDir,
             defaultPassword,
             userFilePattern,

@@ -1,7 +1,8 @@
 [Cmdletbinding()]
 Param(  
   [switch] $skipPublish,    
-  [switch] $skipRestore
+  [switch] $skipRestore,
+  [string] $config = 'Release'
 )
 
 
