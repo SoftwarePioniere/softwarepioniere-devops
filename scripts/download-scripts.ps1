@@ -19,6 +19,7 @@ param (
     'az-devops-repos.ps1',
     'az-devops-service-endpoint.ps1',
     'az-devops-service-endpoints-kv.ps1',
+    'az-devops-service-endpoints-kv2.ps1',
     'az-devops-service-principals.ps1'
   )
 )
