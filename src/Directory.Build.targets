@@ -1,0 +1,45 @@
+<Project>
+
+  <ItemGroup Label="Package References">
+    <PackageReference Include="MinVer" PrivateAssets="All" Version="4.3.0"/>
+<!--    <PackageReference Include="StyleCop.Analyzers" PrivateAssets="All"  Version="1.2.0-beta.507">-->
+<!--      <PrivateAssets>All</PrivateAssets>-->
+<!--    </PackageReference>-->
+    <PackageReference Include="Roslynator.Analyzers" Version="4.11.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup>   
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+
+    <PackageReference Update="SimpleExec" Version="12.0.0"/>
+    <PackageReference Update="Microsoft.Azure.Management.Fluent" Version="1.38.1"/>
+    <PackageReference Update="Microsoft.Azure.Management.Graph.RBAC.Fluent" Version="1.38.1"/>
+    <PackageReference Update="Polly" Version="8.3.*"/>
+
+    <PackageReference Update="Microsoft.Extensions.Hosting" Version="8.*" />
+    <PackageReference Update="Microsoft.Extensions.Http" Version="8.*"/>
+    <PackageReference Update="Spectre.Console.Cli" Version="0.48.0" />
+
+    <PackageReference Update="Serilog" Version="3.1.*" />
+    <PackageReference Update="Serilog.Extensions.Logging" Version="8.*" />
+    <PackageReference Update="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Update="Serilog.Sinks.Literate" Version="3.0.0" />
+  </ItemGroup>
+
+
+  <Target Name="Versioning" BeforeTargets="MinVer">
+    <PropertyGroup Label="Build">
+      <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
+      <MinVerVerbosity>normal</MinVerVerbosity>
+    </PropertyGroup>
+  </Target>
+
+  <!-- <Target Name="SetAssemblyVersion" AfterTargets="MinVer">
+    <PropertyGroup>
+      <AssemblyVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).0</AssemblyVersion>
+    </PropertyGroup>
+  </Target> -->
+
+</Project>

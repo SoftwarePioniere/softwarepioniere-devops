@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <OutputType>Exe</OutputType>  
     <PackAsTool>true</PackAsTool>
+    <PackageId>sopi-devops</PackageId>
     <ToolCommandName>sopi-devops</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
-    <RootNamespace>SoftwarePioniere.DevOps</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
