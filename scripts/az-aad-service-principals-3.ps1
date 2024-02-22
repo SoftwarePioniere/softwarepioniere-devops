@@ -40,10 +40,7 @@ foreach ($pri in $princs) {
   }
   else {
     Write-Host "    Creating SP"
-    $sp = (az ad sp create-for-rbac --name $name --output json) | ConvertFrom-Json
-
-    if ($LASTEXITCODE -ne 0) { throw 'error' }
-    $sp | ConvertTo-Json | Out-File "secret-$($name).json"
+    $sp1 = (az ad sp create-for-rbac --name $name --output json) | ConvertFrom-Json
 
     # check created
     $created = $false
@@ -51,16 +48,22 @@ foreach ($pri in $princs) {
     while ($created -eq $false) {
       # check if created 
       $existingPrincipals = (az ad sp list --all --output json) | ConvertFrom-Json
-      $exi = $existingPrincipals | Where-Object -Property appDisplayName -like $name | Select-Object -first 1
+      $sp = $existingPrincipals | Where-Object -Property appDisplayName -like $name | Select-Object -first 1
   
-      if ($exi) {
+      if ($sp) {
         Write-Host "    Creating SP.. OK"
         $created = $true
 
         Write-Host "Resetting Credentials"
-        $sp1 = (az ad sp credential reset --id $sp.id --years 10 --output json) | ConvertFrom-Json
+        $sp1 = (az ad sp credential reset --id $sp.id --years 2 --output json) | ConvertFrom-Json
         if ($LASTEXITCODE -ne 0) { throw 'error' }
-        $sp1 | ConvertTo-Json | Out-File "secret-$($name).json"  
+        @{
+          clientId= $sp1.appId
+          spId = $sp.id
+          password = $sp1.password
+          tenant = $sp1.tenant
+
+        } | ConvertTo-Json | Out-File "secret-$($name).json"  
       }
       else {
         Write-Host "    Creating SP.. waiting and retry"
@@ -72,10 +75,16 @@ foreach ($pri in $princs) {
   
   if ($pri.reset) {
     Write-Host "Resetting Credentials"
-    $sp = (az ad sp credential reset --id $sp.id --years 10 --output json) | ConvertFrom-Json
+    $sp1 = (az ad sp credential reset --id $sp.id --years 2 --output json) | ConvertFrom-Json
 
     if ($LASTEXITCODE -ne 0) { throw 'error' }
-    $sp | ConvertTo-Json | Out-File "secret-$($name).json"
+    @{
+      clientId= $sp1.appId
+      spId = $sp.id
+      password = $sp1.password
+      tenant = $sp1.tenant
+
+    } | ConvertTo-Json | Out-File "secret-$($name).json"
   }
 
  
