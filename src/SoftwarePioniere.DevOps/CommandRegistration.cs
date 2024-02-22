@@ -7,7 +7,6 @@ public static class CommandRegistration
 {
     public static void RegisterCommands(this IConfigurator config)
     {
-
         config.AddBranch("aad",
             aad =>
             {
