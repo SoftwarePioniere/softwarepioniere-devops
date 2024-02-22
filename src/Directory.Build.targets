@@ -11,22 +11,28 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
 
-    <PackageReference Update="SimpleExec" Version="12.0.0"/>
+    <PackageReference Update="Azure.Identity" Version="1.*"/>
     <PackageReference Update="Microsoft.Azure.Management.Fluent" Version="1.38.1"/>
     <PackageReference Update="Microsoft.Azure.Management.Graph.RBAC.Fluent" Version="1.38.1"/>
-    <PackageReference Update="Polly" Version="8.3.*"/>
-
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="8.*" />
+    <PackageReference Update="Microsoft.Extensions.Logging" Version="8.*" />
     <PackageReference Update="Microsoft.Extensions.Hosting" Version="8.*" />
     <PackageReference Update="Microsoft.Extensions.Http" Version="8.*"/>
-    <PackageReference Update="Spectre.Console.Cli" Version="0.48.0" />
+    <PackageReference Update="Microsoft.Graph" Version="5.*"/>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.*" />
 
+    <PackageReference Update="Polly" Version="8.3.*"/>
     <PackageReference Update="Serilog" Version="3.1.*" />
     <PackageReference Update="Serilog.Extensions.Logging" Version="8.*" />
-    <PackageReference Update="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Update="Serilog.Sinks.Literate" Version="3.0.0" />
-    <PackageReference Update="Serilog.Extensions.Hosting" Version="3.0.0" />
+    <PackageReference Update="Serilog.Sinks.File" Version="5.0.*" />
+    <PackageReference Update="Serilog.Sinks.Literate" Version="3.0.*" />
+    <PackageReference Update="Serilog.Extensions.Hosting" Version="3.0.*" />
+
+    <PackageReference Update="SimpleExec" Version="12.0.*"/>
+
+    <PackageReference Update="Spectre.Console.Cli" Version="0.48.*" />
+
   </ItemGroup>
 
 

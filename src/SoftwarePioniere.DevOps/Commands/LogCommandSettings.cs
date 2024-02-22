@@ -7,14 +7,16 @@ using Spectre.Console.Cli;
 
 namespace SoftwarePioniere.DevOps.Commands;
 
-
 public class LogCommandSettings : CommandSettings
 {
-
     [CommandOption("--log-level")]
     [Description("Minimum level for logging")]
     [TypeConverter(typeof(VerbosityConverter))]
+#if DEBUG
+    [DefaultValue(LogEventLevel.Debug)]
+#else
     [DefaultValue(LogEventLevel.Information)]
+#endif
     public LogEventLevel LogLevel { get; set; }
 }
 
@@ -22,15 +24,15 @@ public sealed class VerbosityConverter : TypeConverter
 {
     private readonly Dictionary<string, LogEventLevel> _lookup = new(StringComparer.OrdinalIgnoreCase)
     {
-        {"d", LogEventLevel.Debug},
-        {"debug", LogEventLevel.Debug},
+        { "d", LogEventLevel.Debug },
+        { "debug", LogEventLevel.Debug },
         // {"v", LogEventLevel.Verbose},
-        {"i", LogEventLevel.Information},
-        {"info", LogEventLevel.Information},
-        {"w", LogEventLevel.Warning},
-        {"warning", LogEventLevel.Warning},
-        {"e", LogEventLevel.Error},
-        {"error", LogEventLevel.Error},
+        { "i", LogEventLevel.Information },
+        { "info", LogEventLevel.Information },
+        { "w", LogEventLevel.Warning },
+        { "warning", LogEventLevel.Warning },
+        { "e", LogEventLevel.Error },
+        { "error", LogEventLevel.Error },
         // {"f", LogEventLevel.Fatal}
     };
 
@@ -45,8 +47,10 @@ public sealed class VerbosityConverter : TypeConverter
                 var message = string.Format(CultureInfo.InvariantCulture, Format, value);
                 throw new InvalidOperationException(message);
             }
+
             return verbosity;
         }
+
         throw new NotSupportedException("Can't convert value to verbosity.");
     }
 }
