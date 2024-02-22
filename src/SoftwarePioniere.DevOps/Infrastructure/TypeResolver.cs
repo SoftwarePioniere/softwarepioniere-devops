@@ -9,8 +9,8 @@ public sealed class TypeResolver(IServiceProvider provider) : ITypeResolver, IDi
 
     public object Resolve(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type);
-        return _provider.GetService(type);
+        // ArgumentNullException.ThrowIfNull(type);
+        return type == null ? null : _provider.GetService(type);
     }
 
     public void Dispose()

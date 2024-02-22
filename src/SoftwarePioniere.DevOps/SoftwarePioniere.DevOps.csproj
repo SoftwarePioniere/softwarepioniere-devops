@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>  
+    <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <IsPackable>true</IsPackable>
     <PackageId>sopi-devops</PackageId>
     <ToolCommandName>sopi-devops</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <AssemblyName>sopi-devops</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,9 +21,10 @@
 
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Extensions.Logging" />
+
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="Serilog.Sinks.Literate" />
-    
+
   </ItemGroup>
 
 </Project>
