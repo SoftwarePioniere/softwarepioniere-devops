@@ -6,6 +6,7 @@ param (
     'az-aad-deploy-serviceprincipals.ps1',
     'az-aad-service-principal.ps1',
     'az-aad-service-principals-2.ps1',
+    'az-aad-service-principals-3.ps1',
     'az-devops-deploy-organization.ps1'
     'az-devops-deploy-projects.ps1',
     'az-devops-extensions.ps1',
